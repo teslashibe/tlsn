@@ -51,6 +51,9 @@ where
 
         mux_config.set_keep_alive(true);
         mux_config.set_close_sync(true);
+        // MPC-TLS keeps more than 512 streams open under load; 4096 * 256 KiB
+        // still fits the default 1 GiB connection receive window.
+        mux_config.set_max_num_streams(4096);
 
         let conn = tlsn_mux::Connection::new(io, mux_config);
         let handle = conn.handle().expect("handle should be available");
