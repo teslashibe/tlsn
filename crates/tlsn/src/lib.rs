@@ -44,6 +44,7 @@
 
 mod deps;
 mod error;
+mod experiment;
 pub(crate) mod ghash;
 pub(crate) mod map;
 pub(crate) mod msg;

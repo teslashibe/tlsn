@@ -16,6 +16,7 @@ use tracing::debug;
 use crate::{
     Error,
     deps::{build_mpc_tls_config, translate_keys},
+    experiment::Phase,
     proxy::ProxyVerifier,
 };
 
@@ -101,6 +102,7 @@ impl VerifierMpcDeps {
     }
 
     pub(crate) async fn setup(&mut self) -> Result<(), Error> {
+        let allocation = Phase::start("verifier.mpc.allocate");
         let mut keys = self.mpc_tls.alloc().map_err(|e| {
             Error::internal()
                 .with_msg("commitment protocol failed to allocate mpc-tls resources")
@@ -111,13 +113,16 @@ impl VerifierMpcDeps {
         self.keys = Some(keys);
 
         drop(vm_lock);
+        allocation.complete();
 
         debug!("setting up mpc-tls");
+        let preprocessing = Phase::start("verifier.mpc.preprocess");
         self.mpc_tls.preprocess().await.map_err(|e| {
             Error::internal()
                 .with_msg("commitment protocol failed during mpc-tls preprocessing")
                 .with_source(e)
         })?;
+        preprocessing.complete();
 
         Ok(())
     }
@@ -175,10 +180,14 @@ impl VerifierProxyDeps {
     }
 
     pub(crate) async fn setup(&mut self) -> Result<(), Error> {
+        let allocation = Phase::start("verifier.proxy.allocate");
         self.verifier.alloc()?;
+        allocation.complete();
 
         debug!("setting up proxy-tls");
+        let preprocessing = Phase::start("verifier.proxy.preprocess");
         self.verifier.preprocess().await?;
+        preprocessing.complete();
 
         Ok(())
     }
