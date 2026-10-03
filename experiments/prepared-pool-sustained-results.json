@@ -1,0 +1,5016 @@
+{
+  "schema_version": 1,
+  "scope": "local in-memory TLS fixture, real MPC cryptography, no external providers",
+  "source_commit": "0d08bcfbbe59533c38f301edfb1637c0add32cde",
+  "source_pin_note": "019 and020 compiled fixture content matches this commit;018 uses retained earlier unsupervised test hash",
+  "test_source_sha256": "9ce71691af17181b34ecf4c524956aedac2adc91443f2245271ec49201dffd7d",
+  "cargo_lock_sha256": "5683d3a6ae34b79046d55b25a9e2a7b899f6a817ec7aaf906d17f06bc12ecfcd",
+  "test_binary_sha256": "9bbc79d58e445f5450f65892ed1f0dc6214448ba9a0b870650ea7259f2a925ea",
+  "rust_toolchain": "1.95.0",
+  "profile": "tests-integration",
+  "insecure_vm": false,
+  "rayon_threads": 32,
+  "command": "CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=32 cargo +1.95.0 test --locked -p tlsn --features experiment-telemetry --profile tests-integration --test prepared_pool -- --ignored --nocapture --test-threads=1",
+  "allocation": {
+    "max_sent_data": 512,
+    "max_sent_records": 3,
+    "max_recv_data": 2048,
+    "max_recv_data_online": 32,
+    "max_recv_records_online": 2,
+    "defer_decryption_from_start": true
+  },
+  "workload": {
+    "fixture_body_bytes": 384,
+    "capacity": 2,
+    "jobs_per_variant_per_complete_run": 30,
+    "cycles_per_complete_run": 15,
+    "peak_live_drivers_per_variant": 4,
+    "complete_block_order": "alternating cold/prepared each cycle",
+    "prepared_refill": "serial fresh preprocessing of two entries then50ms hold",
+    "cold_setup": "two concurrent fresh sessions begun after demand"
+  },
+  "clocks": {
+    "job": "cold: fresh setup through proof and cleanup; prepared: demand after refill/hold through proof and cleanup",
+    "online_phase": "provider creation through verifier acceptance, excludes cleanup",
+    "block": "full refill/setup, hold if prepared, both proofs and cleanup",
+    "campaign": "both alternating groups including all inter-block overhead"
+  },
+  "limitations": [
+    "fixture rates exclude real provider quotas, network transport and receipt storage",
+    "prepared demand latency excludes refill/hold; complete blocks include it",
+    "this serial-refill variant does not prove a throughput improvement",
+    "runs remain separate; p95 uses nearest rank; within-host samples are correlated",
+    "production preparation still needs authenticated future-job binding and admission",
+    "bounded supervision improves test failure visibility;018 stall cause remains unknown"
+  ],
+  "runs": [
+    {
+      "run": "018",
+      "complete": false,
+      "terminal_exit_code": 101,
+      "ended_utc": "2026-10-03T07:27:58.012873+00:00",
+      "private_log_sha256": "d6bf056601e2887aa0f808e868aa3766081bed41a916291ca36e376527f92638",
+      "test_source_sha256": "4401b40553d1b1a0783e135ed6bc182992a4a41830a87bdd6ff5e1386cbbfd33",
+      "records": [
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 198607
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 190002
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 198607,
+          "job": 101,
+          "idle_us": 243068,
+          "online_us": 111764
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 190002,
+          "job": 102,
+          "idle_us": 53128,
+          "online_us": 113149
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 187119
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 189154
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 184415
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 184415,
+          "job": 301,
+          "idle_us": 0,
+          "online_us": 65712
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 180466
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 181344
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 185839
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 186414
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 186429
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 186429,
+          "job": 201,
+          "idle_us": 0,
+          "online_us": 66189
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 217517
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 226184
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 217517,
+          "job": 1,
+          "idle_us": 0,
+          "online_us": 112319
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 1,
+          "elapsed_us": 330096
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 226184,
+          "job": 2,
+          "idle_us": 0,
+          "online_us": 104766
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 2,
+          "elapsed_us": 331149
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 331400
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 191593
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 188180
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 191593,
+          "job": 1,
+          "idle_us": 241262,
+          "online_us": 109338
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 1,
+          "elapsed_us": 109573
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 188180,
+          "job": 2,
+          "idle_us": 53677,
+          "online_us": 109957
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 2,
+          "elapsed_us": 110096
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 543638
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 189262
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 189699
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 189262,
+          "job": 3,
+          "idle_us": 242787,
+          "online_us": 109308
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 3,
+          "elapsed_us": 109547
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 189699,
+          "job": 4,
+          "idle_us": 53423,
+          "online_us": 110272
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 4,
+          "elapsed_us": 110409
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 542867
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 216135
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 217434
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 216135,
+          "job": 3,
+          "idle_us": 0,
+          "online_us": 106931
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 3,
+          "elapsed_us": 323349
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 217434,
+          "job": 4,
+          "idle_us": 0,
+          "online_us": 106749
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 4,
+          "elapsed_us": 324336
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 324599
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 228042
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 228749
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 228042,
+          "job": 6,
+          "idle_us": 0,
+          "online_us": 110711
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 6,
+          "elapsed_us": 338931
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 228749,
+          "job": 5,
+          "idle_us": 0,
+          "online_us": 111311
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 5,
+          "elapsed_us": 340260
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 340278
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 194345
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 194333
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 194345,
+          "job": 5,
+          "idle_us": 247411,
+          "online_us": 112042
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 5,
+          "elapsed_us": 113276
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 194333,
+          "job": 6,
+          "idle_us": 53418,
+          "online_us": 114307
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 6,
+          "elapsed_us": 114458
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 556639
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 191357
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 188791
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 188791,
+          "job": 8,
+          "idle_us": 53414,
+          "online_us": 113819
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 8,
+          "elapsed_us": 113974
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 191357,
+          "job": 7,
+          "idle_us": 241863,
+          "online_us": 115435
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 7,
+          "elapsed_us": 115573
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 548836
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 226664
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 231231
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 231231,
+          "job": 7,
+          "idle_us": 0,
+          "online_us": 108846
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 7,
+          "elapsed_us": 340264
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 226664,
+          "job": 8,
+          "idle_us": 0,
+          "online_us": 114227
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 8,
+          "elapsed_us": 341076
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 341456
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 216702
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 234755
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 216702,
+          "job": 9,
+          "idle_us": 0,
+          "online_us": 114944
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 9,
+          "elapsed_us": 331891
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 234755,
+          "job": 10,
+          "idle_us": 0,
+          "online_us": 99630
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 10,
+          "elapsed_us": 334605
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 334983
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 187358
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 188763
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 187358,
+          "job": 9,
+          "idle_us": 240094,
+          "online_us": 119563
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 9,
+          "elapsed_us": 119815
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 188763,
+          "job": 10,
+          "idle_us": 51661,
+          "online_us": 120755
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 10,
+          "elapsed_us": 120911
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 548778
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 198828
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 199193
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 199193,
+          "job": 12,
+          "idle_us": 51625,
+          "online_us": 114106
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 12,
+          "elapsed_us": 114280
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 198828,
+          "job": 11,
+          "idle_us": 250447,
+          "online_us": 115622
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 11,
+          "elapsed_us": 115802
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 565119
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 243147
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 244611
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 244611,
+          "job": 11,
+          "idle_us": 0,
+          "online_us": 133360
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 11,
+          "elapsed_us": 378132
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 243147,
+          "job": 12,
+          "idle_us": 0,
+          "online_us": 135866
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 12,
+          "elapsed_us": 379170
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 379499
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 299010
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 299661
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 299010,
+          "job": 13,
+          "idle_us": 0,
+          "online_us": 123310
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 13,
+          "elapsed_us": 422471
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 299661,
+          "job": 14,
+          "idle_us": 0,
+          "online_us": 123663
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 14,
+          "elapsed_us": 423464
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 423832
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 218774
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 212579
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 212579,
+          "job": 14,
+          "idle_us": 53392,
+          "online_us": 121040
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 14,
+          "elapsed_us": 121210
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 218774,
+          "job": 13,
+          "idle_us": 265646,
+          "online_us": 122472
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 13,
+          "elapsed_us": 122642
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 607094
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 192701
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 192087
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 192701,
+          "job": 15,
+          "idle_us": 243195,
+          "online_us": 112847
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 15,
+          "elapsed_us": 113104
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 192087,
+          "job": 16,
+          "idle_us": 51438,
+          "online_us": 113660
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 16,
+          "elapsed_us": 113808
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 550121
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 208876
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 223301
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 208876,
+          "job": 16,
+          "idle_us": 0,
+          "online_us": 110772
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 16,
+          "elapsed_us": 323399
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 223301,
+          "job": 15,
+          "idle_us": 0,
+          "online_us": 103122
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 15,
+          "elapsed_us": 326584
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 326604
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 212561
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 229912
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 212561,
+          "job": 17,
+          "idle_us": 0,
+          "online_us": 117030
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 17,
+          "elapsed_us": 329793
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 229912,
+          "job": 18,
+          "idle_us": 0,
+          "online_us": 100459
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 18,
+          "elapsed_us": 330604
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 330911
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 189756
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 192807
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 192807,
+          "job": 18,
+          "idle_us": 53441,
+          "online_us": 113419
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 18,
+          "elapsed_us": 113574
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 189756,
+          "job": 17,
+          "idle_us": 245900,
+          "online_us": 115042
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 17,
+          "elapsed_us": 115189
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 550891
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 199991
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 188747
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 199991,
+          "job": 19,
+          "idle_us": 241853,
+          "online_us": 123491
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 19,
+          "elapsed_us": 123722
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 188747,
+          "job": 20,
+          "idle_us": 53439,
+          "online_us": 124491
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 20,
+          "elapsed_us": 124623
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 566881
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 223444
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 224957
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 223444,
+          "job": 19,
+          "idle_us": 0,
+          "online_us": 109384
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 19,
+          "elapsed_us": 333124
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 224957,
+          "job": 20,
+          "idle_us": 0,
+          "online_us": 108892
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 20,
+          "elapsed_us": 333963
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 334300
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 217329
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 235029
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 217329,
+          "job": 21,
+          "idle_us": 0,
+          "online_us": 95871
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 21,
+          "elapsed_us": 313426
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 235029,
+          "job": 22,
+          "idle_us": 0,
+          "online_us": 103700
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 22,
+          "elapsed_us": 338948
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 339328
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 195480
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 200939
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 200939,
+          "job": 22,
+          "idle_us": 53064,
+          "online_us": 115546
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 22,
+          "elapsed_us": 115672
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 195480,
+          "job": 21,
+          "idle_us": 253674,
+          "online_us": 117171
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 21,
+          "elapsed_us": 117333
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 566545
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 198051
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 24,
+          "setup_us": 192000
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 198051,
+          "job": 23,
+          "idle_us": 245075,
+          "online_us": 110547
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 23,
+          "elapsed_us": 110798
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 24,
+          "setup_us": 192000,
+          "job": 24,
+          "idle_us": 53404,
+          "online_us": 111499
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 24,
+          "elapsed_us": 111659
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 11,
+          "jobs": 2,
+          "elapsed_us": 555203
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 220754
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 220754,
+          "job": 23,
+          "idle_us": 0,
+          "online_us": 64227
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 23,
+          "elapsed_us": 285200
+        }
+      ],
+      "controller_stop": "isolated hung fixture stopped after 3 minutes 24 seconds; cause unknown",
+      "no_complete_latency_or_throughput_claim": true,
+      "observed_sustained_verified": 47,
+      "observed_basic_verified": 4
+    },
+    {
+      "run": "019",
+      "complete": true,
+      "terminal_exit_code": 0,
+      "ended_utc": "2026-10-03T07:37:59.243479+00:00",
+      "private_log_sha256": "c220b2150d616b041f165dca1fed220d1b77070fc1bb51235e5776dc97ec8eab",
+      "test_source_sha256": "9ce71691af17181b34ecf4c524956aedac2adc91443f2245271ec49201dffd7d",
+      "records": [
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 205729
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 190743
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 205729,
+          "job": 101,
+          "idle_us": 242863,
+          "online_us": 114497
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 190743,
+          "job": 102,
+          "idle_us": 52426,
+          "online_us": 115571
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 192979
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 193314
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 193015
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 193015,
+          "job": 301,
+          "idle_us": 0,
+          "online_us": 69588
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 195701
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 193742
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 192561
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 189068
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 191778
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 191778,
+          "job": 201,
+          "idle_us": 0,
+          "online_us": 66525
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 221908
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 222826
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 221908,
+          "job": 2,
+          "idle_us": 0,
+          "online_us": 115041
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 2,
+          "elapsed_us": 337145
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 222826,
+          "job": 1,
+          "idle_us": 0,
+          "online_us": 115576
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 1,
+          "elapsed_us": 338578
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 338600
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 196922
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 196665
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 196922,
+          "job": 1,
+          "idle_us": 248752,
+          "online_us": 111473
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 1,
+          "elapsed_us": 111722
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 196665,
+          "job": 2,
+          "idle_us": 52783,
+          "online_us": 111909
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 2,
+          "elapsed_us": 112101
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 558569
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 197915
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 198423
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 198423,
+          "job": 4,
+          "idle_us": 52418,
+          "online_us": 114482
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 4,
+          "elapsed_us": 114608
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 197915,
+          "job": 3,
+          "idle_us": 250506,
+          "online_us": 115915
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 3,
+          "elapsed_us": 116046
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 564521
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 233903
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 236114
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 233903,
+          "job": 4,
+          "idle_us": 0,
+          "online_us": 115276
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 4,
+          "elapsed_us": 349364
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 236114,
+          "job": 3,
+          "idle_us": 0,
+          "online_us": 114643
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 3,
+          "elapsed_us": 350939
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 350977
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 209731
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 231340
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 209731,
+          "job": 5,
+          "idle_us": 0,
+          "online_us": 98012
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 5,
+          "elapsed_us": 307970
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 231340,
+          "job": 6,
+          "idle_us": 0,
+          "online_us": 95090
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 6,
+          "elapsed_us": 326628
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 326975
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 201592
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 193355
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 193355,
+          "job": 6,
+          "idle_us": 52433,
+          "online_us": 112761
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 6,
+          "elapsed_us": 112910
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 201592,
+          "job": 5,
+          "idle_us": 245455,
+          "online_us": 114249
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 5,
+          "elapsed_us": 114410
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 561510
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 195272
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 188497
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 195272,
+          "job": 7,
+          "idle_us": 240571,
+          "online_us": 114588
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 7,
+          "elapsed_us": 114811
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 188497,
+          "job": 8,
+          "idle_us": 52458,
+          "online_us": 115400
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 8,
+          "elapsed_us": 115542
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 551877
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 221270
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 228522
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 221270,
+          "job": 8,
+          "idle_us": 0,
+          "online_us": 112733
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 8,
+          "elapsed_us": 334198
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 228522,
+          "job": 7,
+          "idle_us": 0,
+          "online_us": 107031
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 7,
+          "elapsed_us": 335736
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 335757
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 229094
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 229151
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 229151,
+          "job": 10,
+          "idle_us": 0,
+          "online_us": 109618
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 10,
+          "elapsed_us": 340096
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 229094,
+          "job": 9,
+          "idle_us": 0,
+          "online_us": 112456
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 9,
+          "elapsed_us": 341720
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 341740
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 194209
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 196505
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 194209,
+          "job": 9,
+          "idle_us": 248813,
+          "online_us": 112146
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 9,
+          "elapsed_us": 112394
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 196505,
+          "job": 10,
+          "idle_us": 52664,
+          "online_us": 113151
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 10,
+          "elapsed_us": 113254
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 556707
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 195680
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 188977
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 188977,
+          "job": 12,
+          "idle_us": 52391,
+          "online_us": 113538
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 12,
+          "elapsed_us": 113677
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 195680,
+          "job": 11,
+          "idle_us": 241036,
+          "online_us": 114811
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 11,
+          "elapsed_us": 114978
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 551752
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 233968
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 235988
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 233968,
+          "job": 12,
+          "idle_us": 0,
+          "online_us": 108872
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 12,
+          "elapsed_us": 343004
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 235988,
+          "job": 11,
+          "idle_us": 0,
+          "online_us": 108269
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 11,
+          "elapsed_us": 344440
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 344457
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 217170
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 239893
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 217170,
+          "job": 13,
+          "idle_us": 0,
+          "online_us": 97842
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 13,
+          "elapsed_us": 315220
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 239893,
+          "job": 14,
+          "idle_us": 0,
+          "online_us": 92998
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 14,
+          "elapsed_us": 333103
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 333455
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 189875
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 189859
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 189875,
+          "job": 13,
+          "idle_us": 241180,
+          "online_us": 113883
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 13,
+          "elapsed_us": 114086
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 189859,
+          "job": 14,
+          "idle_us": 51673,
+          "online_us": 114743
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 14,
+          "elapsed_us": 114978
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 546472
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 191019
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 196103
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 191019,
+          "job": 15,
+          "idle_us": 247947,
+          "online_us": 113830
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 15,
+          "elapsed_us": 114105
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 196103,
+          "job": 16,
+          "idle_us": 52185,
+          "online_us": 114734
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 16,
+          "elapsed_us": 114905
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 554280
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 228358
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 229177
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 228358,
+          "job": 16,
+          "idle_us": 0,
+          "online_us": 112538
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 16,
+          "elapsed_us": 341074
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 229177,
+          "job": 15,
+          "idle_us": 0,
+          "online_us": 113116
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 15,
+          "elapsed_us": 342434
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 342466
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 241561
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 241865
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 241561,
+          "job": 17,
+          "idle_us": 0,
+          "online_us": 111159
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 17,
+          "elapsed_us": 353053
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 241865,
+          "job": 18,
+          "idle_us": 0,
+          "online_us": 111717
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 18,
+          "elapsed_us": 353736
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 354214
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 195720
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 190229
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 195720,
+          "job": 17,
+          "idle_us": 242317,
+          "online_us": 113504
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 17,
+          "elapsed_us": 113748
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 190229,
+          "job": 18,
+          "idle_us": 52445,
+          "online_us": 114550
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 18,
+          "elapsed_us": 114651
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 553120
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 194478
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 185984
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 194478,
+          "job": 19,
+          "idle_us": 238058,
+          "online_us": 111285
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 19,
+          "elapsed_us": 112502
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 185984,
+          "job": 20,
+          "idle_us": 52435,
+          "online_us": 113414
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 20,
+          "elapsed_us": 113559
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 546545
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 220201
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 220238
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 220201,
+          "job": 19,
+          "idle_us": 0,
+          "online_us": 112895
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 19,
+          "elapsed_us": 333244
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 220238,
+          "job": 20,
+          "idle_us": 0,
+          "online_us": 113429
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 20,
+          "elapsed_us": 333816
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 334219
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 230548
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 239812
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 230548,
+          "job": 21,
+          "idle_us": 0,
+          "online_us": 115402
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 21,
+          "elapsed_us": 346195
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 239812,
+          "job": 22,
+          "idle_us": 0,
+          "online_us": 106952
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 22,
+          "elapsed_us": 346975
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 347365
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 192356
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 198761
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 192356,
+          "job": 21,
+          "idle_us": 250827,
+          "online_us": 112349
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 21,
+          "elapsed_us": 112610
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 198761,
+          "job": 22,
+          "idle_us": 52400,
+          "online_us": 113244
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 22,
+          "elapsed_us": 113432
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 557037
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 191589
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 24,
+          "setup_us": 191067
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 191589,
+          "job": 23,
+          "idle_us": 242780,
+          "online_us": 112164
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 23,
+          "elapsed_us": 112390
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 24,
+          "setup_us": 191067,
+          "job": 24,
+          "idle_us": 52055,
+          "online_us": 112998
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 24,
+          "elapsed_us": 113121
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 11,
+          "jobs": 2,
+          "elapsed_us": 547917
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 224949
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 24,
+          "setup_us": 224924
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 224949,
+          "job": 23,
+          "idle_us": 0,
+          "online_us": 111778
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 23,
+          "elapsed_us": 337011
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 24,
+          "setup_us": 224924,
+          "job": 24,
+          "idle_us": 0,
+          "online_us": 112742
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 24,
+          "elapsed_us": 337852
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 11,
+          "jobs": 2,
+          "elapsed_us": 338278
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 26,
+          "setup_us": 217707
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 25,
+          "setup_us": 227304
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 26,
+          "setup_us": 217707,
+          "job": 26,
+          "idle_us": 0,
+          "online_us": 115534
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 26,
+          "elapsed_us": 333411
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 25,
+          "setup_us": 227304,
+          "job": 25,
+          "idle_us": 0,
+          "online_us": 107413
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 25,
+          "elapsed_us": 334896
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 12,
+          "jobs": 2,
+          "elapsed_us": 334915
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 25,
+          "setup_us": 197974
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 26,
+          "setup_us": 200426
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 26,
+          "setup_us": 200426,
+          "job": 26,
+          "idle_us": 51700,
+          "online_us": 115930
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 26,
+          "elapsed_us": 116094
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 25,
+          "setup_us": 197974,
+          "job": 25,
+          "idle_us": 251771,
+          "online_us": 118772
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 25,
+          "elapsed_us": 118930
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 12,
+          "jobs": 2,
+          "elapsed_us": 568736
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 27,
+          "setup_us": 202820
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 28,
+          "setup_us": 194146
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 27,
+          "setup_us": 202820,
+          "job": 27,
+          "idle_us": 246212,
+          "online_us": 115071
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 27,
+          "elapsed_us": 115208
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 28,
+          "setup_us": 194146,
+          "job": 28,
+          "idle_us": 52404,
+          "online_us": 115589
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 28,
+          "elapsed_us": 115737
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 13,
+          "jobs": 2,
+          "elapsed_us": 565180
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 28,
+          "setup_us": 226460
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 27,
+          "setup_us": 236461
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 28,
+          "setup_us": 226460,
+          "job": 28,
+          "idle_us": 1,
+          "online_us": 104860
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 28,
+          "elapsed_us": 333244
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 27,
+          "setup_us": 236461,
+          "job": 27,
+          "idle_us": 0,
+          "online_us": 105750
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 27,
+          "elapsed_us": 342429
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 13,
+          "jobs": 2,
+          "elapsed_us": 342444
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 30,
+          "setup_us": 227991
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 29,
+          "setup_us": 232914
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 30,
+          "setup_us": 227991,
+          "job": 30,
+          "idle_us": 0,
+          "online_us": 110065
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 30,
+          "elapsed_us": 338245
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 29,
+          "setup_us": 232914,
+          "job": 29,
+          "idle_us": 0,
+          "online_us": 106641
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 29,
+          "elapsed_us": 339778
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 14,
+          "jobs": 2,
+          "elapsed_us": 339802
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 29,
+          "setup_us": 188314
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 30,
+          "setup_us": 188282
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 30,
+          "setup_us": 188282,
+          "job": 30,
+          "idle_us": 51911,
+          "online_us": 114633
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 30,
+          "elapsed_us": 114749
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 29,
+          "setup_us": 188314,
+          "job": 29,
+          "idle_us": 239846,
+          "online_us": 116104
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 29,
+          "elapsed_us": 116266
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 14,
+          "jobs": 2,
+          "elapsed_us": 544475
+        },
+        {
+          "record": "campaign",
+          "jobs": 60,
+          "elapsed_us": 13434532
+        }
+      ],
+      "tests_passed": 4,
+      "successful_proofs": 64,
+      "sustained_successful_proofs": 60,
+      "basic_successful_proofs": 4,
+      "campaign_elapsed_us": 13434532,
+      "campaign_jobs_per_second": 4.466102726913003,
+      "summary": {
+        "sustained_cold": {
+          "fresh_setup": {
+            "samples": 30,
+            "min_us": 209731,
+            "sample_median_us": 228808.0,
+            "nearest_rank_p95_us": 241561,
+            "max_us": 241865
+          },
+          "demand_to_verified": {
+            "samples": 30,
+            "min_us": 307970,
+            "sample_median_us": 338411.5,
+            "nearest_rank_p95_us": 353053,
+            "max_us": 353736
+          },
+          "online_phase": {
+            "samples": 30,
+            "min_us": 92998,
+            "sample_median_us": 111438.0,
+            "nearest_rank_p95_us": 115534,
+            "max_us": 115576
+          },
+          "idle_phase": {
+            "samples": 30,
+            "min_us": 0,
+            "sample_median_us": 0.0,
+            "nearest_rank_p95_us": 0,
+            "max_us": 1
+          },
+          "complete_block": {
+            "samples": 15,
+            "min_us": 326975,
+            "sample_median_us": 339802,
+            "nearest_rank_p95_us": 354214,
+            "max_us": 354214
+          },
+          "complete_block_total_us": 5105664,
+          "complete_block_jobs_per_second": 5.875827316486161
+        },
+        "sustained_prepared": {
+          "fresh_setup": {
+            "samples": 30,
+            "min_us": 185984,
+            "sample_median_us": 194343.5,
+            "nearest_rank_p95_us": 201592,
+            "max_us": 202820
+          },
+          "demand_to_verified": {
+            "samples": 30,
+            "min_us": 111722,
+            "sample_median_us": 114257.5,
+            "nearest_rank_p95_us": 116266,
+            "max_us": 118930
+          },
+          "online_phase": {
+            "samples": 30,
+            "min_us": 111285,
+            "sample_median_us": 114066.0,
+            "nearest_rank_p95_us": 116104,
+            "max_us": 118772
+          },
+          "idle_phase": {
+            "samples": 30,
+            "min_us": 51673,
+            "sample_median_us": 145420.5,
+            "nearest_rank_p95_us": 250827,
+            "max_us": 251771
+          },
+          "complete_block": {
+            "samples": 15,
+            "min_us": 544475,
+            "sample_median_us": 554280,
+            "nearest_rank_p95_us": 568736,
+            "max_us": 568736
+          },
+          "complete_block_total_us": 8328698,
+          "complete_block_jobs_per_second": 3.6020035784704882
+        }
+      }
+    },
+    {
+      "run": "020",
+      "complete": true,
+      "terminal_exit_code": 0,
+      "ended_utc": "2026-10-03T07:41:06.039642+00:00",
+      "private_log_sha256": "10563635e8ee201b4f197b3057470b97ee47a9e810db146375ca4ea803a09be0",
+      "test_source_sha256": "9ce71691af17181b34ecf4c524956aedac2adc91443f2245271ec49201dffd7d",
+      "records": [
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 199291
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 199967
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 199291,
+          "job": 101,
+          "idle_us": 251194,
+          "online_us": 115127
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 199967,
+          "job": 102,
+          "idle_us": 51280,
+          "online_us": 116253
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 194529
+        },
+        {
+          "record": "phase",
+          "case": "bounded_burst",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 199080
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 197375
+        },
+        {
+          "record": "phase",
+          "case": "pending_cancel",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 197375,
+          "job": 301,
+          "idle_us": 0,
+          "online_us": 70245
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 194515
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 191989
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 193919
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 193533
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 192679
+        },
+        {
+          "record": "phase",
+          "case": "expiry_cancel",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 192679,
+          "job": 201,
+          "idle_us": 1,
+          "online_us": 66914
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 217273
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 226261
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 217273,
+          "job": 1,
+          "idle_us": 0,
+          "online_us": 112699
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 1,
+          "elapsed_us": 333992
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 226261,
+          "job": 2,
+          "idle_us": 0,
+          "online_us": 110095
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 2,
+          "elapsed_us": 336559
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 336901
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 1,
+          "setup_us": 192620
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 2,
+          "setup_us": 192190
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 2,
+          "setup_us": 192190,
+          "job": 2,
+          "idle_us": 53371,
+          "online_us": 113739
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 2,
+          "elapsed_us": 113879
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 1,
+          "setup_us": 192620,
+          "job": 1,
+          "idle_us": 243898,
+          "online_us": 116475
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 1,
+          "elapsed_us": 116625
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 0,
+          "jobs": 2,
+          "elapsed_us": 553193
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 196657
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 196047
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 196657,
+          "job": 3,
+          "idle_us": 248122,
+          "online_us": 111852
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 3,
+          "elapsed_us": 112091
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 196047,
+          "job": 4,
+          "idle_us": 52444,
+          "online_us": 112565
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 4,
+          "elapsed_us": 112732
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 558026
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 3,
+          "setup_us": 226238
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 4,
+          "setup_us": 227319
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 3,
+          "setup_us": 226238,
+          "job": 3,
+          "idle_us": 0,
+          "online_us": 109692
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 3,
+          "elapsed_us": 336111
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 4,
+          "setup_us": 227319,
+          "job": 4,
+          "idle_us": 0,
+          "online_us": 109258
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 4,
+          "elapsed_us": 336777
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 1,
+          "jobs": 2,
+          "elapsed_us": 337179
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 223180
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 225102
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 223180,
+          "job": 6,
+          "idle_us": 0,
+          "online_us": 112254
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 6,
+          "elapsed_us": 335614
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 225102,
+          "job": 5,
+          "idle_us": 0,
+          "online_us": 111893
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 5,
+          "elapsed_us": 337182
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 337208
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 5,
+          "setup_us": 194047
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 6,
+          "setup_us": 193238
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 6,
+          "setup_us": 193238,
+          "job": 6,
+          "idle_us": 52521,
+          "online_us": 112720
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 6,
+          "elapsed_us": 112845
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 5,
+          "setup_us": 194047,
+          "job": 5,
+          "idle_us": 245313,
+          "online_us": 114208
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 5,
+          "elapsed_us": 114362
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 2,
+          "jobs": 2,
+          "elapsed_us": 553771
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 192811
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 191368
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 192811,
+          "job": 7,
+          "idle_us": 243458,
+          "online_us": 113445
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 7,
+          "elapsed_us": 113741
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 191368,
+          "job": 8,
+          "idle_us": 52440,
+          "online_us": 114374
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 8,
+          "elapsed_us": 114579
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 551283
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 7,
+          "setup_us": 213554
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 8,
+          "setup_us": 236719
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 7,
+          "setup_us": 213554,
+          "job": 7,
+          "idle_us": 0,
+          "online_us": 110755
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 7,
+          "elapsed_us": 324522
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 8,
+          "setup_us": 236719,
+          "job": 8,
+          "idle_us": 0,
+          "online_us": 95033
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 8,
+          "elapsed_us": 331923
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 3,
+          "jobs": 2,
+          "elapsed_us": 332364
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 220244
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 222396
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 220244,
+          "job": 10,
+          "idle_us": 0,
+          "online_us": 110481
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 10,
+          "elapsed_us": 330932
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 222396,
+          "job": 9,
+          "idle_us": 0,
+          "online_us": 110023
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 9,
+          "elapsed_us": 332634
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 332655
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 9,
+          "setup_us": 192349
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 10,
+          "setup_us": 194300
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 9,
+          "setup_us": 192349,
+          "job": 9,
+          "idle_us": 246395,
+          "online_us": 108903
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 9,
+          "elapsed_us": 109141
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 10,
+          "setup_us": 194300,
+          "job": 10,
+          "idle_us": 52406,
+          "online_us": 109737
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 10,
+          "elapsed_us": 109941
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 4,
+          "jobs": 2,
+          "elapsed_us": 549100
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 194941
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 193597
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 194941,
+          "job": 11,
+          "idle_us": 245680,
+          "online_us": 112350
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 11,
+          "elapsed_us": 112591
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 193597,
+          "job": 12,
+          "idle_us": 52432,
+          "online_us": 113219
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 12,
+          "elapsed_us": 113408
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 554467
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 11,
+          "setup_us": 222422
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 12,
+          "setup_us": 230278
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 11,
+          "setup_us": 222422,
+          "job": 11,
+          "idle_us": 0,
+          "online_us": 111674
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 11,
+          "elapsed_us": 334367
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 12,
+          "setup_us": 230278,
+          "job": 12,
+          "idle_us": 0,
+          "online_us": 104721
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 12,
+          "elapsed_us": 335242
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 5,
+          "jobs": 2,
+          "elapsed_us": 335627
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 225380
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 225436
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 225436,
+          "job": 14,
+          "idle_us": 0,
+          "online_us": 112418
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 14,
+          "elapsed_us": 337995
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 225380,
+          "job": 13,
+          "idle_us": 0,
+          "online_us": 113753
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 13,
+          "elapsed_us": 339354
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 339373
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 13,
+          "setup_us": 193852
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 14,
+          "setup_us": 201508
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 13,
+          "setup_us": 193852,
+          "job": 13,
+          "idle_us": 253589,
+          "online_us": 113722
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 13,
+          "elapsed_us": 113923
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 14,
+          "setup_us": 201508,
+          "job": 14,
+          "idle_us": 52447,
+          "online_us": 114527
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 14,
+          "elapsed_us": 114691
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 6,
+          "jobs": 2,
+          "elapsed_us": 562559
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 203616
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 194157
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 194157,
+          "job": 16,
+          "idle_us": 51468,
+          "online_us": 113884
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 16,
+          "elapsed_us": 114054
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 203616,
+          "job": 15,
+          "idle_us": 245258,
+          "online_us": 115268
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 15,
+          "elapsed_us": 115488
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 564412
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 16,
+          "setup_us": 225760
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 15,
+          "setup_us": 227705
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 16,
+          "setup_us": 225760,
+          "job": 16,
+          "idle_us": 0,
+          "online_us": 110979
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 16,
+          "elapsed_us": 337033
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 15,
+          "setup_us": 227705,
+          "job": 15,
+          "idle_us": 0,
+          "online_us": 110500
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 15,
+          "elapsed_us": 338411
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 7,
+          "jobs": 2,
+          "elapsed_us": 338433
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 228569
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 232760
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 228569,
+          "job": 17,
+          "idle_us": 0,
+          "online_us": 111189
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 17,
+          "elapsed_us": 340012
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 232760,
+          "job": 18,
+          "idle_us": 0,
+          "online_us": 107739
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 18,
+          "elapsed_us": 340695
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 341058
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 17,
+          "setup_us": 192057
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 18,
+          "setup_us": 198879
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 17,
+          "setup_us": 192057,
+          "job": 17,
+          "idle_us": 250469,
+          "online_us": 116662
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 17,
+          "elapsed_us": 116925
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 18,
+          "setup_us": 198879,
+          "job": 18,
+          "idle_us": 51980,
+          "online_us": 117456
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 18,
+          "elapsed_us": 117614
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 8,
+          "jobs": 2,
+          "elapsed_us": 560596
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 194948
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 198644
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 194948,
+          "job": 19,
+          "idle_us": 249722,
+          "online_us": 113554
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 19,
+          "elapsed_us": 113810
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 198644,
+          "job": 20,
+          "idle_us": 51439,
+          "online_us": 114450
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 20,
+          "elapsed_us": 114611
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 559723
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 19,
+          "setup_us": 233070
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 20,
+          "setup_us": 241195
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 19,
+          "setup_us": 233070,
+          "job": 19,
+          "idle_us": 0,
+          "online_us": 113732
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 19,
+          "elapsed_us": 347087
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 20,
+          "setup_us": 241195,
+          "job": 20,
+          "idle_us": 0,
+          "online_us": 106528
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 20,
+          "elapsed_us": 347976
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 9,
+          "jobs": 2,
+          "elapsed_us": 348340
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 225478
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 233001
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 225478,
+          "job": 22,
+          "idle_us": 0,
+          "online_us": 119588
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 22,
+          "elapsed_us": 345233
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 233001,
+          "job": 21,
+          "idle_us": 0,
+          "online_us": 113662
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 21,
+          "elapsed_us": 346851
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 346869
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 21,
+          "setup_us": 200073
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 22,
+          "setup_us": 193231
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 22,
+          "setup_us": 193231,
+          "job": 22,
+          "idle_us": 52434,
+          "online_us": 112775
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 22,
+          "elapsed_us": 112948
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 21,
+          "setup_us": 200073,
+          "job": 21,
+          "idle_us": 245316,
+          "online_us": 114149
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 21,
+          "elapsed_us": 114344
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 10,
+          "jobs": 2,
+          "elapsed_us": 559783
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 196245
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 24,
+          "setup_us": 194554
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 24,
+          "setup_us": 194554,
+          "job": 24,
+          "idle_us": 52455,
+          "online_us": 112563
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 24,
+          "elapsed_us": 112702
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 196245,
+          "job": 23,
+          "idle_us": 246632,
+          "online_us": 113971
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 23,
+          "elapsed_us": 114177
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 11,
+          "jobs": 2,
+          "elapsed_us": 557114
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 24,
+          "setup_us": 219682
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 23,
+          "setup_us": 220424
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 23,
+          "setup_us": 220424,
+          "job": 23,
+          "idle_us": 0,
+          "online_us": 113270
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 23,
+          "elapsed_us": 333940
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 24,
+          "setup_us": 219682,
+          "job": 24,
+          "idle_us": 0,
+          "online_us": 115099
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 24,
+          "elapsed_us": 334929
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 11,
+          "jobs": 2,
+          "elapsed_us": 335294
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 26,
+          "setup_us": 222516
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 25,
+          "setup_us": 223358
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 26,
+          "setup_us": 222516,
+          "job": 26,
+          "idle_us": 0,
+          "online_us": 112350
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 26,
+          "elapsed_us": 335048
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 25,
+          "setup_us": 223358,
+          "job": 25,
+          "idle_us": 0,
+          "online_us": 113010
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 25,
+          "elapsed_us": 336532
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 12,
+          "jobs": 2,
+          "elapsed_us": 336549
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 25,
+          "setup_us": 193534
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 26,
+          "setup_us": 195770
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 25,
+          "setup_us": 193534,
+          "job": 25,
+          "idle_us": 246985,
+          "online_us": 113379
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 25,
+          "elapsed_us": 113648
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 26,
+          "setup_us": 195770,
+          "job": 26,
+          "idle_us": 51570,
+          "online_us": 114233
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 26,
+          "elapsed_us": 114399
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 12,
+          "jobs": 2,
+          "elapsed_us": 555374
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 27,
+          "setup_us": 195311
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 28,
+          "setup_us": 190752
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 27,
+          "setup_us": 195311,
+          "job": 27,
+          "idle_us": 242961,
+          "online_us": 114296
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 27,
+          "elapsed_us": 114566
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 28,
+          "setup_us": 190752,
+          "job": 28,
+          "idle_us": 52563,
+          "online_us": 115330
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 28,
+          "elapsed_us": 115509
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 13,
+          "jobs": 2,
+          "elapsed_us": 554273
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 27,
+          "setup_us": 225103
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 28,
+          "setup_us": 231678
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 27,
+          "setup_us": 225103,
+          "job": 27,
+          "idle_us": 0,
+          "online_us": 104057
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 27,
+          "elapsed_us": 332763
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 28,
+          "setup_us": 231678,
+          "job": 28,
+          "idle_us": 0,
+          "online_us": 103283
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 28,
+          "elapsed_us": 335186
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 13,
+          "jobs": 2,
+          "elapsed_us": 335614
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 29,
+          "setup_us": 224177
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "prepared",
+          "entry": 30,
+          "setup_us": 228328
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 29,
+          "setup_us": 224177,
+          "job": 29,
+          "idle_us": 0,
+          "online_us": 110037
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 29,
+          "elapsed_us": 334532
+        },
+        {
+          "record": "phase",
+          "case": "sustained_cold",
+          "kind": "verified",
+          "entry": 30,
+          "setup_us": 228328,
+          "job": 30,
+          "idle_us": 0,
+          "online_us": 107029
+        },
+        {
+          "record": "job",
+          "case": "sustained_cold",
+          "job": 30,
+          "elapsed_us": 335519
+        },
+        {
+          "record": "block",
+          "case": "sustained_cold",
+          "cycle": 14,
+          "jobs": 2,
+          "elapsed_us": 335945
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 29,
+          "setup_us": 198919
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "prepared",
+          "entry": 30,
+          "setup_us": 195546
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 29,
+          "setup_us": 198919,
+          "job": 29,
+          "idle_us": 247656,
+          "online_us": 114061
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 29,
+          "elapsed_us": 114290
+        },
+        {
+          "record": "phase",
+          "case": "sustained_prepared",
+          "kind": "verified",
+          "entry": 30,
+          "setup_us": 195546,
+          "job": 30,
+          "idle_us": 52451,
+          "online_us": 115025
+        },
+        {
+          "record": "job",
+          "case": "sustained_prepared",
+          "job": 30,
+          "elapsed_us": 115192
+        },
+        {
+          "record": "block",
+          "case": "sustained_prepared",
+          "cycle": 14,
+          "jobs": 2,
+          "elapsed_us": 562255
+        },
+        {
+          "record": "campaign",
+          "jobs": 60,
+          "elapsed_us": 13425500
+        }
+      ],
+      "tests_passed": 4,
+      "successful_proofs": 64,
+      "sustained_successful_proofs": 60,
+      "basic_successful_proofs": 4,
+      "campaign_elapsed_us": 13425500,
+      "campaign_jobs_per_second": 4.46910729581766,
+      "summary": {
+        "sustained_cold": {
+          "fresh_setup": {
+            "samples": 30,
+            "min_us": 213554,
+            "sample_median_us": 225457.0,
+            "nearest_rank_p95_us": 236719,
+            "max_us": 241195
+          },
+          "demand_to_verified": {
+            "samples": 30,
+            "min_us": 324522,
+            "sample_median_us": 335862.5,
+            "nearest_rank_p95_us": 347087,
+            "max_us": 347976
+          },
+          "online_phase": {
+            "samples": 30,
+            "min_us": 95033,
+            "sample_median_us": 110867.0,
+            "nearest_rank_p95_us": 115099,
+            "max_us": 119588
+          },
+          "idle_phase": {
+            "samples": 30,
+            "min_us": 0,
+            "sample_median_us": 0.0,
+            "nearest_rank_p95_us": 0,
+            "max_us": 0
+          },
+          "complete_block": {
+            "samples": 15,
+            "min_us": 332364,
+            "sample_median_us": 336901,
+            "nearest_rank_p95_us": 348340,
+            "max_us": 348340
+          },
+          "complete_block_total_us": 5069409,
+          "complete_block_jobs_per_second": 5.917849595485391
+        },
+        "sustained_prepared": {
+          "fresh_setup": {
+            "samples": 30,
+            "min_us": 190752,
+            "sample_median_us": 194427.0,
+            "nearest_rank_p95_us": 201508,
+            "max_us": 203616
+          },
+          "demand_to_verified": {
+            "samples": 30,
+            "min_us": 109141,
+            "sample_median_us": 114115.5,
+            "nearest_rank_p95_us": 116925,
+            "max_us": 117614
+          },
+          "online_phase": {
+            "samples": 30,
+            "min_us": 108903,
+            "sample_median_us": 113927.5,
+            "nearest_rank_p95_us": 116662,
+            "max_us": 117456
+          },
+          "idle_phase": {
+            "samples": 30,
+            "min_us": 51439,
+            "sample_median_us": 148166.0,
+            "nearest_rank_p95_us": 250469,
+            "max_us": 253589
+          },
+          "complete_block": {
+            "samples": 15,
+            "min_us": 549100,
+            "sample_median_us": 557114,
+            "nearest_rank_p95_us": 564412,
+            "max_us": 564412
+          },
+          "complete_block_total_us": 8355929,
+          "complete_block_jobs_per_second": 3.590265068073221
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "scope": "Local in-memory TLS fixture, real MPC cryptography, no external providers",
+  "base_commit": "ac752671f585eb95b09253e09a4cd9f83a88fff4",
+  "test_source_sha256": "31abc10bb659a502a62dae9cf8383271c17534709a23cc85cd9a1e90ba148f0d",
+  "rust_toolchain": "1.95.0",
+  "profile": "tests-integration",
+  "insecure_vm": false,
+  "command": "CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=32 cargo +1.95.0 test --locked -p tlsn --features experiment-telemetry --profile tests-integration --test prepared_pool -- --ignored --nocapture --test-threads=1",
+  "allocation": {
+    "max_sent_data": 512,
+    "max_sent_records": 3,
+    "max_recv_data": 2048,
+    "max_recv_data_online": 32,
+    "max_recv_records_online": 2,
+    "defer_decryption_from_start": true
+  },
+  "tests": {
+    "passed": 3,
+    "failed": 0,
+    "execution_seconds": 2.65
+  },
+  "observations": {
+    "burst_pool_capacity": 2,
+    "burst_peak_live_drivers": 4,
+    "delayed_demand_ms": 50,
+    "ready_and_leased_expiry_verified": true,
+    "ready_and_leased_cancellation_verified": true,
+    "pending_acceptance_cancellation_verified": true,
+    "cancelled_and_expired_provider_connections": 0,
+    "successful_proofs": 4
+  },
+  "summary": {
+    "setup": {
+      "samples": 10,
+      "min_us": 188138,
+      "sample_median_us": 218056.5,
+      "max_us": 256935
+    },
+    "online": {
+      "samples": 4,
+      "min_us": 76814,
+      "sample_median_us": 117262.5,
+      "max_us": 133363
+    }
+  },
+  "measurements": [
+    {
+      "case": "bounded_burst",
+      "kind": "prepared",
+      "entry": 1,
+      "setup_us": 217123
+    },
+    {
+      "case": "bounded_burst",
+      "kind": "prepared",
+      "entry": 2,
+      "setup_us": 218990
+    },
+    {
+      "case": "bounded_burst",
+      "kind": "verified",
+      "entry": 2,
+      "job": 102,
+      "setup_us": 218990,
+      "idle_us": 52427,
+      "online_us": 130343
+    },
+    {
+      "case": "bounded_burst",
+      "kind": "verified",
+      "entry": 1,
+      "job": 101,
+      "setup_us": 217123,
+      "idle_us": 271241,
+      "online_us": 133363
+    },
+    {
+      "case": "bounded_burst",
+      "kind": "prepared",
+      "entry": 3,
+      "setup_us": 188138
+    },
+    {
+      "case": "bounded_burst",
+      "kind": "prepared",
+      "entry": 4,
+      "setup_us": 196484
+    },
+    {
+      "case": "pending_cancel",
+      "kind": "prepared",
+      "entry": 2,
+      "setup_us": 215252
+    },
+    {
+      "case": "pending_cancel",
+      "kind": "verified",
+      "entry": 2,
+      "job": 301,
+      "setup_us": 215252,
+      "idle_us": 0,
+      "online_us": 76814
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "prepared",
+      "entry": 1,
+      "setup_us": 216263
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "prepared",
+      "entry": 2,
+      "setup_us": 223217
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "prepared",
+      "entry": 3,
+      "setup_us": 256935
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "prepared",
+      "entry": 4,
+      "setup_us": 256734
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "prepared",
+      "entry": 5,
+      "setup_us": 228942
+    },
+    {
+      "case": "expiry_cancel",
+      "kind": "verified",
+      "entry": 5,
+      "job": 201,
+      "setup_us": 228942,
+      "idle_us": 0,
+      "online_us": 104182
+    }
+  ],
+  "limits": [
+    "Setup includes both parties and their session initialization; online includes provider fixture creation, TLS exchange, proof generation and verifier acceptance",
+    "Online excludes cleanup after successful verification",
+    "Small correctness fixture sample; these distributions do not estimate live X latency or sustained throughput",
+    "Capacity is a private test harness; preparation is bound to verifier/session/allocation class, not to an authorized funded Scarlett job",
+    "Production preparation admission, authenticated allocation/TTL, exact funded-job binding, distributed recovery and runtime integration remain unimplemented"
+  ]
+}

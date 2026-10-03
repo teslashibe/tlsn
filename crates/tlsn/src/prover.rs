@@ -15,6 +15,7 @@ pub use tlsn_core::ProverOutput;
 use crate::{
     Error, Mpc, PROXY_STREAM_PREFIX, ProtocolConfig, Proxy, Result, TlsOutput,
     deps::{ProverDeps, ProverMpcDeps, ProverProxyDeps},
+    experiment::Phase,
     msg::{ProveRequestMsg, Response, TlsCommitRequestMsg},
     prover::{
         client::{MpcTlsClient, ProxyTlsClient, TlsClient},
@@ -95,6 +96,7 @@ impl Prover<state::Initialized> {
         mut self,
         config: P,
     ) -> Result<Prover<state::CommitAccepted<P::Commit>>> {
+        let negotiation = Phase::start("prover.commit.negotiate");
         let mut ctx = self
             .ctx
             .take()
@@ -128,6 +130,7 @@ impl Prover<state::Initialized> {
                     .with_source(e)
             })?;
 
+        negotiation.complete();
         let commit_config: TlsCommitConfig = config.into();
         let mut deps = ProverDeps::new(commit_config, ctx);
         deps.setup().await?;
@@ -338,6 +341,7 @@ where
     S: AsyncRead + AsyncWrite + Send + Unpin,
 {
     async fn finish(self) -> Result<Prover<state::Committed>, Error> {
+        let finalization = Phase::start("prover.commit.finalize");
         let (
             mut ctx,
             mut vm,
@@ -393,6 +397,7 @@ where
             },
         };
 
+        finalization.complete();
         Ok(prover)
     }
 
@@ -525,6 +530,7 @@ impl Prover<state::Committed> {
     /// * `config` - The disclosure configuration.
     #[instrument(parent = &self.span, level = "info", skip_all, err)]
     pub async fn prove(&mut self, config: &ProveConfig) -> Result<ProverOutput> {
+        let proving = Phase::start("prover.prove");
         let ctx = self
             .ctx
             .as_mut()
@@ -587,6 +593,7 @@ impl Prover<state::Committed> {
 
         let output = prove::prove(ctx, vm, keys, transcript, tls_transcript, config).await?;
 
+        proving.complete();
         Ok(output)
     }
 

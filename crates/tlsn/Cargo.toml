@@ -17,6 +17,8 @@ rayon = ["mpz-zk/rayon", "mpz-garble/rayon"]
 web = ["dep:web-spawn"]
 hash-keccak256 = ["mpz-hash/keccak256"]
 hash-blake3 = ["mpz-hash/blake3"]
+# Numeric phase timings for controlled performance experiments. Disabled by default.
+experiment-telemetry = []
 
 [dependencies]
 tlsn-attestation = { workspace = true }
