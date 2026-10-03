@@ -56,6 +56,18 @@ fn app(state: AppState) -> Router {
 pub async fn bind<T: AsyncRead + AsyncWrite + Send + Unpin + 'static>(
     socket: T,
 ) -> anyhow::Result<()> {
+    bind_with_keep_alive(socket, false).await
+}
+
+/// Binds the fixture server with an explicit HTTP/1.1 keep-alive policy.
+///
+/// Enabling keep-alive lets controlled experiments exchange several requests
+/// within a single TLS connection. The default [`bind`] behavior closes after
+/// one request.
+pub async fn bind_with_keep_alive<T: AsyncRead + AsyncWrite + Send + Unpin + 'static>(
+    socket: T,
+    keep_alive: bool,
+) -> anyhow::Result<()> {
     let key = PrivateKeyDer::Pkcs8(SERVER_KEY_DER.into());
     let cert = CertificateDer::from(SERVER_CERT_DER);
 
@@ -90,7 +102,7 @@ pub async fn bind<T: AsyncRead + AsyncWrite + Send + Unpin + 'static>(
 
     tokio::select! {
         _ = http1::Builder::new()
-                .keep_alive(false)
+                .keep_alive(keep_alive)
                 .serve_connection(io, hyper_service) => {},
         _ = receiver => {},
     }
