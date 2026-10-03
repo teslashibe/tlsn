@@ -94,3 +94,71 @@ cargo +nightly fmt --all --check
 The two prepared-batch cases cover a generous allocation and an exact request
 byte allocation with three total sent records. These local fixture results are
 separate from real provider latency, reliability and throughput measurements.
+
+## Bounded preparation pool experiment
+
+`crates/tlsn/tests/prepared_pool.rs` keeps a small pool entirely inside the test
+harness. Each entry owns a fresh prover, verifier, live session drivers and a
+capacity permit. Preparation fixes the verifier session, fixture trust roots and
+allocation class (512 sent bytes, 2 KiB received bytes, three total sent records,
+two online received records, deferred decryption). The provider connection and
+the exact request are created after demand takes an entry.
+
+The harness tests these behaviors with real cryptography:
+
+- Two prepared entries wait for delayed demand and prove two different requests
+  in a burst. A third take returns no capacity. Leased entries retain their
+  capacity permits, so refill cannot exceed the limit of two entries or four
+  driver tasks.
+- Successful consumption releases capacity; refill creates new sessions with
+  fresh material. The prepared typestates are moved once and are never cloned,
+  serialized, restored or reused.
+- Cancelling a ready entry or a leased entry before provider execution closes
+  and joins both drivers. Expiry removes ready entries and is checked again at
+  execution, so taking a lease cannot extend the material's TTL. Neither
+  cancelled nor expired entries open a provider connection.
+- Cancelling a pending negotiation, after the verifier receives the config but
+  before acceptance, aborts owned drivers and releases its capacity permit. A
+  new independent preparation then completes and proves a request.
+- Every successful proof authenticates the complete fixture request and
+  response, including a different public test job identifier in each request.
+
+```sh
+CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=32 cargo +1.95.0 test --locked -p tlsn \
+  --features experiment-telemetry --profile tests-integration \
+  --test prepared_pool -- --ignored --nocapture --test-threads=1
+```
+
+The runner emits sanitized `E3_METRIC` rows. `setup_us` runs from session creation
+through successful fresh preprocessing on both parties. `idle_us` measures the
+time from ready until demand, including time spent preparing other entries.
+`online_us` runs from demand through provider transport creation, TLS exchange,
+proof generation and successful verifier acceptance. It excludes pool cleanup
+after verification. Preparation and execution still consume the full protocol
+work; preparation moves some of it before demand.
+
+This fixture pool is an SDK feasibility experiment. It does not authorize a
+generic warm pool against Scarlett's deployed verifier. Preparation itself is
+bound to a verifier session and allocation class; it is not bound to a funded
+Scarlett job. A production implementation still needs explicit preparation
+admission with bounded verifier resources, authenticated allocation and TTL limits, later
+binding to the exact funded job before provider execution, cancellation and
+expiry across both processes, accounting for capacity while entries are leased,
+and restart cleanup. Provider accounts and request sizes must fit the admitted
+class. Remote verifier latency, actual X bandwidth and sustained request
+throughput require separate live measurements.
+
+The [saved fixture measurements](prepared-pool-fixture-results.json) pin the test
+source hash and contain every sanitized numeric row from the final validation:
+
+| Phase | Samples | Minimum | Sample median | Maximum |
+| --- | --- | --- | --- | --- |
+| Fresh setup | 10 | 188.138 ms | 218.057 ms | 256.935 ms |
+| Demand through verification | 4 | 76.814 ms | 117.263 ms | 133.363 ms |
+
+The four successful requests include two concurrent requests in the bounded
+burst and two independent recovery requests. This small mixed fixture sample
+checks feasibility and cleanup; it does not establish live-provider latency
+percentiles or sustainable throughput. No on-demand cold-path benchmark was run
+by this harness, so adding setup and online times is only a phase accounting
+comparison, not a measured latency improvement.
