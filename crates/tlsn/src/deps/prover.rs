@@ -75,11 +75,10 @@ impl ProverMpcDeps {
         let rcot_send = SharedRCOTSender::new(rcot_send);
         let rcot_recv = SharedRCOTReceiver::new(rcot_recv);
 
-        let mpc =
-            cfg_select! {
-                tlsn_insecure => mpz_ideal_vm::IdealVm::new(),
-                _ => ProverMpc::new(DerandCOTSender::new(rcot_send.clone()), rng.random(), delta),
-            };
+        let mpc = cfg_select! {
+            tlsn_insecure => mpz_ideal_vm::IdealVm::new(),
+            _ => ProverMpc::new(DerandCOTSender::new(rcot_send.clone()), rng.random(), delta),
+        };
 
         let zk = cfg_select! {
             tlsn_insecure => mpz_ideal_vm::IdealVm::new(),
