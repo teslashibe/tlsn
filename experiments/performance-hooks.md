@@ -122,6 +122,10 @@ The harness tests these behaviors with real cryptography:
   new independent preparation then completes and proves a request.
 - Every successful proof authenticates the complete fixture request and
   response, including a different public test job identifier in each request.
+- The sustained comparison alternates cold and prepared two-job bursts for
+  fifteen cycles. Each group verifies thirty different jobs, returns both
+  permits after every burst and leaves no session driver running between blocks.
+  It records demand latency separately from full preparation and cleanup.
 
 ```sh
 CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=32 cargo +1.95.0 test --locked -p tlsn \
@@ -148,8 +152,8 @@ and restart cleanup. Provider accounts and request sizes must fit the admitted
 class. Remote verifier latency, actual X bandwidth and sustained request
 throughput require separate live measurements.
 
-The [saved fixture measurements](prepared-pool-fixture-results.json) pin the test
-source hash and contain every sanitized numeric row from the final validation:
+The [historical three-case measurements](prepared-pool-fixture-results.json) pin
+their test source hash and retain every sanitized numeric row from that run:
 
 | Phase | Samples | Minimum | Sample median | Maximum |
 | --- | --- | --- | --- | --- |
@@ -159,11 +163,52 @@ source hash and contain every sanitized numeric row from the final validation:
 The four successful requests include two concurrent requests in the bounded
 burst and two independent recovery requests. This small mixed fixture sample
 checks feasibility and cleanup; it does not establish live-provider latency
-percentiles or sustainable throughput. No on-demand cold-path benchmark was run
-by this harness, so adding setup and online times is only a phase accounting
-comparison, not a measured latency improvement.
+percentiles or sustainable throughput. That earlier three-case run did not
+measure an on-demand cold path; adding its setup and online phases cannot
+establish a measured latency improvement.
 
 These measurements were rerun on the current alpha.16 fork. The earlier
 [alpha.15 fixture measurements](prepared-pool-fixture-results-alpha15.json)
 retain their original source pin. Both are small mixed correctness runs; they
 do not establish a latency improvement between library versions.
+
+## Sustained cold and prepared comparison
+
+The [sustained report](prepared-pool-sustained-results.json) and
+[numeric CSV](prepared-pool-sustained-results.csv) retain two complete runs and
+one earlier incomplete run. Each complete run passed all four pool tests:
+sixty sustained proofs and four basic correctness/recovery proofs. The sustained
+workload requests a 384-byte fixture body, with the same allocation and capacity
+two for each group. Cold and prepared block order alternates each cycle.
+
+| Run | Group | Jobs | Demand-to-verification median / p95 | Full block rate |
+| --- | --- | --- | --- | --- |
+| 019 | Cold | 30 | 338.412 / 353.053 ms | 5.876 jobs/s |
+| 019 | Prepared | 30 | 114.258 / 116.266 ms | 3.602 jobs/s |
+| 020 | Cold | 30 | 335.863 / 347.087 ms | 5.918 jobs/s |
+| 020 | Prepared | 30 | 114.116 / 116.925 ms | 3.590 jobs/s |
+
+Demand latency includes cleanup. Cold demand begins before fresh setup; prepared
+demand begins after refill and a 50 ms hold. The full block clock includes all
+setup, the hold when applicable, both proofs and cleanup. Rates divide thirty
+completed jobs by all fifteen full block windows for that group. The combined
+sixty-job campaign rates were 4.466 and 4.469 jobs/s, including both groups and
+inter-block overhead. These are in-memory fixture rates without provider
+quotas, network transport or receipt persistence. The p95 is nearest rank;
+repeated samples on one host are correlated.
+
+Preparation reduced latency after demand arrived in both repeats. This pool
+refills its two entries serially, while cold setup runs concurrently. Complete
+prepared blocks also include the artificial hold. Its full block rate therefore
+does not show a throughput improvement. Parallel refill or preparation
+overlapping arrivals would require a separate comparison and the production
+admission/binding contract described above.
+
+Earlier run 018 stopped responding during a cold block after forty-seven
+sustained and four basic proofs. The controller stopped that isolated fixture
+process after three minutes and twenty-four seconds. Its partial numeric rows
+and original log hash remain in the report; it has no complete throughput or
+latency claim. The current fixture supervises backend completion during response
+I/O, aborts an owned backend on exit, and bounds response/finalization waits to
+ten seconds and complete sustained blocks to twenty seconds. The two later
+repeats passed with those bounds. The original stall's cause remains unknown.
