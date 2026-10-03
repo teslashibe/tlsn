@@ -134,12 +134,10 @@ fn micros(duration: Duration) -> u64 {
 }
 
 fn preparation_progress(case: &'static str, entry: usize, phase: &'static str, started: Instant) {
-    if case.starts_with("parallel_") || case.starts_with("sustained_") {
-        println!(
-            "E3_PROGRESS case={case} entry={entry} phase={phase} elapsed_us={}",
-            micros(started.elapsed())
-        );
-    }
+    println!(
+        "E3_PROGRESS case={case} entry={entry} phase={phase} elapsed_us={}",
+        micros(started.elapsed())
+    );
 }
 
 fn unexpected_driver_exit(
@@ -166,6 +164,7 @@ impl Prepared {
     ) -> Self {
         let experiment_case = resources.case;
         let started = Instant::now();
+        preparation_progress(experiment_case, id, "fresh_started", started);
         let (prover_socket, verifier_socket) = tokio::io::duplex(2 << 23);
         let mut session_p = Session::new(prover_socket.compat());
         let mut session_v = Session::new(verifier_socket.compat());
@@ -205,6 +204,7 @@ impl Prepared {
             .defer_decryption_from_start(true)
             .build()
             .unwrap();
+        preparation_progress(experiment_case, id, "drivers_started", started);
         let proving = async {
             preparation_progress(experiment_case, id, "prover_commit_started", started);
             let result = prover.commit(config).await;
@@ -229,15 +229,19 @@ impl Prepared {
         };
         let negotiation = async { tokio::join!(proving, verifying) };
         tokio::pin!(negotiation);
-        let (prover, verifier) = tokio::select! {
-            completed = &mut negotiation => completed,
-            result = session.prover_driver.as_mut().unwrap() => {
-                unexpected_driver_exit(experiment_case, id, "prover", result)
+        let (prover, verifier) = tokio::time::timeout(Duration::from_secs(10), async {
+            tokio::select! {
+                completed = &mut negotiation => completed,
+                result = session.prover_driver.as_mut().unwrap() => {
+                    unexpected_driver_exit(experiment_case, id, "prover", result)
+                }
+                result = session.verifier_driver.as_mut().unwrap() => {
+                    unexpected_driver_exit(experiment_case, id, "verifier", result)
+                }
             }
-            result = session.verifier_driver.as_mut().unwrap() => {
-                unexpected_driver_exit(experiment_case, id, "verifier", result)
-            }
-        };
+        })
+        .await
+        .expect("fixture preparation exceeded its ten-second liveness bound");
         let setup_us = micros(started.elapsed());
         println!("E3_METRIC case={experiment_case} kind=prepared entry={id} setup_us={setup_us}");
         Self {
@@ -300,6 +304,7 @@ impl Prepared {
         // Provider transport is created only after demand consumes the entry.
         let (provider, server_socket) = tokio::io::duplex(2 << 16);
         let server = tokio::spawn(bind(server_socket.compat()));
+        let _server_guard = AbortProofTask(server.abort_handle());
         let request = format!("GET /bytes?size={size}&experiment_job={job} HTTP/1.1\r\nHost: fixture\r\nConnection: close\r\n\r\n").into_bytes();
         let proving = async {
             let (mut connection, prover) = prover
@@ -359,7 +364,11 @@ impl Prepared {
             verifier.close().await.unwrap();
             output
         };
-        let (response, output) = tokio::join!(proving, verifying);
+        let (response, output) = tokio::time::timeout(Duration::from_secs(10), async {
+            tokio::join!(proving, verifying)
+        })
+        .await
+        .expect("fixture proof exceeded its ten-second liveness bound");
         let verified = output.transcript.unwrap();
         assert!(verified.is_complete());
         assert_eq!(verified.sent_unsafe(), request);
