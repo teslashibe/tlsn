@@ -3,7 +3,7 @@
 //! No Scarlett job authorization or production pool protocol is implemented.
 
 use std::{
-    collections::VecDeque,
+    collections::{HashSet, VecDeque},
     sync::{
         Arc,
         atomic::{AtomicUsize, Ordering},
@@ -42,6 +42,14 @@ struct Resources {
 }
 
 struct DriverLifetime(Arc<Resources>);
+
+struct AbortProofTask(tokio::task::AbortHandle);
+
+impl Drop for AbortProofTask {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
 
 impl DriverLifetime {
     fn new(resources: Arc<Resources>) -> Self {
@@ -259,13 +267,37 @@ impl Prepared {
                     provider.compat(),
                 )
                 .unwrap();
-            let proof_task = tokio::spawn(prover.into_future());
-            connection.write_all(&request).await.unwrap();
-            connection.flush().await.unwrap();
-            let mut response = Vec::new();
-            connection.read_to_end(&mut response).await.unwrap();
-            connection.close().await.unwrap();
-            let mut prover = proof_task.await.unwrap().unwrap();
+            let mut proof_task = tokio::spawn(prover.into_future());
+            let _proof_guard = AbortProofTask(proof_task.abort_handle());
+            let mut completed = None;
+            let response_io = async {
+                connection.write_all(&request).await.unwrap();
+                connection.flush().await.unwrap();
+                let mut response = Vec::new();
+                connection.read_to_end(&mut response).await.unwrap();
+                connection.close().await.unwrap();
+                response
+            };
+            tokio::pin!(response_io);
+            // A failed backend must not leave a fixture reader waiting forever.
+            // Successful backend completion still drains buffered plaintext.
+            let response = tokio::time::timeout(Duration::from_secs(10), async {
+                tokio::select! {
+                    response = &mut response_io => response,
+                    backend = &mut proof_task => {
+                        completed = Some(backend.expect("fixture backend task failed").expect("fixture TLS backend failed"));
+                        response_io.await
+                    }
+                }
+            }).await.expect("fixture response exceeded its ten-second liveness bound");
+            let mut prover = match completed {
+                Some(prover) => prover,
+                None => tokio::time::timeout(Duration::from_secs(10), proof_task)
+                    .await
+                    .expect("fixture TLS finalization exceeded its liveness bound")
+                    .expect("fixture backend task failed")
+                    .expect("fixture TLS backend failed"),
+            };
             assert_eq!(prover.transcript().sent(), request);
             assert_eq!(prover.transcript().received(), response);
             let mut config = ProveConfig::builder(prover.transcript());
@@ -321,6 +353,98 @@ struct Pool {
     next_id: usize,
     ready: VecDeque<Prepared>,
     resources: Arc<Resources>,
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "real MPC cryptography; run explicitly with --ignored"]
+async fn sustained_pool_refill_and_cold_sessions_conserve_capacity() {
+    let prepared = Arc::new(Resources {
+        case: "sustained_prepared",
+        ..Default::default()
+    });
+    let cold_resources = Arc::new(Resources {
+        case: "sustained_cold",
+        ..Default::default()
+    });
+    let mut pool = Pool::new(2, Duration::from_secs(5), prepared.clone());
+    let cold_slots = Arc::new(Semaphore::new(2));
+    let mut prepared_entries = HashSet::new();
+    let mut cold_entries = HashSet::new();
+    let campaign = Instant::now();
+    for cycle in 0..15 {
+        // Alternate cold/prepared block order. Both groups serve two jobs at
+        // once; complete block clocks include every preparation and cleanup.
+        for block in 0..2 {
+            let started = Instant::now();
+            let (a, b, resources, entries) = tokio::time::timeout(Duration::from_secs(20), async {
+                if (cycle + block) % 2 == 0 {
+                    let cold = |job| {
+                        let resources = cold_resources.clone();
+                        let permit = cold_slots.clone().try_acquire_owned().unwrap();
+                        async move {
+                            let started = Instant::now();
+                            let entry = Prepared::fresh(job, permit, resources.clone(), None).await;
+                            let measured = entry.serve(job, 384, resources).await.unwrap();
+                            println!(
+                                "E3_JOB case=sustained_cold sequence={job} elapsed_us={}",
+                                micros(started.elapsed())
+                            );
+                            measured
+                        }
+                    };
+                    let (a, b) = tokio::join!(cold(cycle * 2 + 1), cold(cycle * 2 + 2));
+                    (a, b, &cold_resources, &mut cold_entries)
+                } else {
+                    assert_eq!(pool.refill().await, 2);
+                    assert_eq!(prepared.active_drivers.load(Ordering::SeqCst), 4);
+                    tokio::time::sleep(Duration::from_millis(50)).await;
+                    let a = pool.take().await.unwrap();
+                    let b = pool.take().await.unwrap();
+                    assert!(pool.take().await.is_none());
+                    assert_eq!(pool.refill().await, 0);
+                    let serve = |entry: Prepared, job| {
+                        let resources = prepared.clone();
+                        async move {
+                            let started = Instant::now();
+                            let measured = entry.serve(job, 384, resources).await.unwrap();
+                            println!(
+                                "E3_JOB case=sustained_prepared sequence={job} elapsed_us={}",
+                                micros(started.elapsed())
+                            );
+                            measured
+                        }
+                    };
+                    let (a, b) = tokio::join!(serve(a, cycle * 2 + 1), serve(b, cycle * 2 + 2));
+                    (a, b, &prepared, &mut prepared_entries)
+                }
+            })
+            .await
+            .expect("fixture preparation/burst exceeded its twenty-second liveness bound");
+            assert_eq!((a.job, b.job), (cycle * 2 + 1, cycle * 2 + 2));
+            assert!(entries.insert(a.entry) && entries.insert(b.entry));
+            assert_eq!(resources.active_drivers.load(Ordering::SeqCst), 0);
+            assert_eq!(
+                resources.provider_connections.load(Ordering::SeqCst),
+                (cycle + 1) * 2
+            );
+            assert_eq!(resources.peak_drivers.load(Ordering::SeqCst), 4);
+            assert_eq!(cold_slots.available_permits(), 2);
+            assert_eq!(pool.slots.available_permits(), 2);
+            println!(
+                "E3_BLOCK case={} cycle={cycle} jobs=2 elapsed_us={}",
+                resources.case,
+                micros(started.elapsed())
+            );
+        }
+    }
+    assert_eq!(prepared_entries.len(), 30);
+    assert_eq!(cold_entries.len(), 30);
+    pool.close().await;
+    assert_eq!(prepared.active_drivers.load(Ordering::SeqCst), 0);
+    println!(
+        "E3_CAMPAIGN jobs=60 elapsed_us={}",
+        micros(campaign.elapsed())
+    );
 }
 
 impl Pool {
