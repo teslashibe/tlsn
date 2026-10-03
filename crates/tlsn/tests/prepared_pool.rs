@@ -134,12 +134,27 @@ fn micros(duration: Duration) -> u64 {
 }
 
 fn preparation_progress(case: &'static str, entry: usize, phase: &'static str, started: Instant) {
-    if case.starts_with("parallel_") {
+    if case.starts_with("parallel_") || case.starts_with("sustained_") {
         println!(
             "E3_PROGRESS case={case} entry={entry} phase={phase} elapsed_us={}",
             micros(started.elapsed())
         );
     }
+}
+
+fn unexpected_driver_exit(
+    case: &'static str,
+    entry: usize,
+    role: &'static str,
+    result: <Driver as std::future::Future>::Output,
+) -> ! {
+    let status = match result {
+        Ok(Ok(_)) => "completed",
+        Ok(Err(_)) => "sdk_error",
+        Err(_) => "task_error",
+    };
+    println!("E3_DRIVER_EXIT case={case} entry={entry} role={role} status={status}");
+    panic!("fixture session driver exited during preparation");
 }
 
 impl Prepared {
@@ -169,7 +184,7 @@ impl Prepared {
         let (driver_v, handle_v) = session_v.split();
         let lifetime_p = DriverLifetime::new(resources.clone());
         let lifetime_v = DriverLifetime::new(resources);
-        let session = LiveSession {
+        let mut session = LiveSession {
             prover_handle: handle_p,
             verifier_handle: handle_v,
             prover_driver: Some(tokio::spawn(async move {
@@ -212,7 +227,17 @@ impl Prepared {
             preparation_progress(experiment_case, id, "verifier_accept_returned", started);
             result
         };
-        let (prover, verifier) = tokio::join!(proving, verifying);
+        let negotiation = async { tokio::join!(proving, verifying) };
+        tokio::pin!(negotiation);
+        let (prover, verifier) = tokio::select! {
+            completed = &mut negotiation => completed,
+            result = session.prover_driver.as_mut().unwrap() => {
+                unexpected_driver_exit(experiment_case, id, "prover", result)
+            }
+            result = session.verifier_driver.as_mut().unwrap() => {
+                unexpected_driver_exit(experiment_case, id, "verifier", result)
+            }
+        };
         let setup_us = micros(started.elapsed());
         println!("E3_METRIC case={experiment_case} kind=prepared entry={id} setup_us={setup_us}");
         Self {
