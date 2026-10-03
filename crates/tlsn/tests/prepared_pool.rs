@@ -358,12 +358,30 @@ struct Pool {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 #[ignore = "real MPC cryptography; run explicitly with --ignored"]
 async fn sustained_pool_refill_and_cold_sessions_conserve_capacity() {
+    sustained_pool_comparison(false).await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "real MPC cryptography; run explicitly with --ignored"]
+async fn sustained_parallel_pool_refill_and_cold_sessions_conserve_capacity() {
+    sustained_pool_comparison(true).await;
+}
+
+async fn sustained_pool_comparison(parallel_refill: bool) {
     let prepared = Arc::new(Resources {
-        case: "sustained_prepared",
+        case: if parallel_refill {
+            "parallel_prepared"
+        } else {
+            "sustained_prepared"
+        },
         ..Default::default()
     });
     let cold_resources = Arc::new(Resources {
-        case: "sustained_cold",
+        case: if parallel_refill {
+            "parallel_cold"
+        } else {
+            "sustained_cold"
+        },
         ..Default::default()
     });
     let mut pool = Pool::new(2, Duration::from_secs(5), prepared.clone());
@@ -383,10 +401,11 @@ async fn sustained_pool_refill_and_cold_sessions_conserve_capacity() {
                         let permit = cold_slots.clone().try_acquire_owned().unwrap();
                         async move {
                             let started = Instant::now();
+                            let label = resources.case;
                             let entry = Prepared::fresh(job, permit, resources.clone(), None).await;
                             let measured = entry.serve(job, 384, resources).await.unwrap();
                             println!(
-                                "E3_JOB case=sustained_cold sequence={job} elapsed_us={}",
+                                "E3_JOB case={label} sequence={job} elapsed_us={}",
                                 micros(started.elapsed())
                             );
                             measured
@@ -395,20 +414,27 @@ async fn sustained_pool_refill_and_cold_sessions_conserve_capacity() {
                     let (a, b) = tokio::join!(cold(cycle * 2 + 1), cold(cycle * 2 + 2));
                     (a, b, &cold_resources, &mut cold_entries)
                 } else {
-                    assert_eq!(pool.refill().await, 2);
+                    let filled = if parallel_refill {
+                        pool.refill_parallel().await
+                    } else {
+                        pool.refill().await
+                    };
+                    assert_eq!(filled, 2);
                     assert_eq!(prepared.active_drivers.load(Ordering::SeqCst), 4);
                     tokio::time::sleep(Duration::from_millis(50)).await;
                     let a = pool.take().await.unwrap();
                     let b = pool.take().await.unwrap();
                     assert!(pool.take().await.is_none());
                     assert_eq!(pool.refill().await, 0);
+                    assert_eq!(pool.refill_parallel().await, 0);
                     let serve = |entry: Prepared, job| {
                         let resources = prepared.clone();
                         async move {
                             let started = Instant::now();
+                            let label = resources.case;
                             let measured = entry.serve(job, 384, resources).await.unwrap();
                             println!(
-                                "E3_JOB case=sustained_prepared sequence={job} elapsed_us={}",
+                                "E3_JOB case={label} sequence={job} elapsed_us={}",
                                 micros(started.elapsed())
                             );
                             measured
@@ -442,7 +468,12 @@ async fn sustained_pool_refill_and_cold_sessions_conserve_capacity() {
     pool.close().await;
     assert_eq!(prepared.active_drivers.load(Ordering::SeqCst), 0);
     println!(
-        "E3_CAMPAIGN jobs=60 elapsed_us={}",
+        "{} jobs=60 elapsed_us={}",
+        if parallel_refill {
+            "E3_PARALLEL_CAMPAIGN"
+        } else {
+            "E3_CAMPAIGN"
+        },
         micros(campaign.elapsed())
     );
 }
@@ -472,6 +503,27 @@ impl Pool {
             entry.expires_at = Some(entry.ready_at + self.ttl);
             self.ready.push_back(entry);
             count += 1;
+        }
+        count
+    }
+
+    async fn refill_parallel(&mut self) -> usize {
+        let mut preparations = Vec::new();
+        while self.ready.len() + preparations.len() < self.capacity {
+            let Ok(permit) = self.slots.clone().try_acquire_owned() else {
+                break;
+            };
+            let id = self.next_id;
+            self.next_id += 1;
+            preparations.push(Prepared::fresh(id, permit, self.resources.clone(), None));
+        }
+        // Every in-progress entry already owns a permit. Dropping this future
+        // cancels owned preparation futures and closes their session drivers.
+        let entries = futures::future::join_all(preparations).await;
+        let count = entries.len();
+        for mut entry in entries {
+            entry.expires_at = Some(entry.ready_at + self.ttl);
+            self.ready.push_back(entry);
         }
         count
     }
