@@ -153,8 +153,8 @@ source hash and contain every sanitized numeric row from the final validation:
 
 | Phase | Samples | Minimum | Sample median | Maximum |
 | --- | --- | --- | --- | --- |
-| Fresh setup | 10 | 188.138 ms | 218.057 ms | 256.935 ms |
-| Demand through verification | 4 | 76.814 ms | 117.263 ms | 133.363 ms |
+| Fresh setup | 10 | 183.126 ms | 198.125 ms | 214.548 ms |
+| Demand through verification | 4 | 68.206 ms | 89.299 ms | 111.079 ms |
 
 The four successful requests include two concurrent requests in the bounded
 burst and two independent recovery requests. This small mixed fixture sample
@@ -162,3 +162,8 @@ checks feasibility and cleanup; it does not establish live-provider latency
 percentiles or sustainable throughput. No on-demand cold-path benchmark was run
 by this harness, so adding setup and online times is only a phase accounting
 comparison, not a measured latency improvement.
+
+These measurements were rerun on the current alpha.16 fork. The earlier
+[alpha.15 fixture measurements](prepared-pool-fixture-results-alpha15.json)
+retain their original source pin. Both are small mixed correctness runs; they
+do not establish a latency improvement between library versions.
