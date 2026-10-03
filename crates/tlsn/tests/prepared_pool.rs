@@ -133,6 +133,15 @@ fn micros(duration: Duration) -> u64 {
     duration.as_micros().min(u64::MAX as u128) as u64
 }
 
+fn preparation_progress(case: &'static str, entry: usize, phase: &'static str, started: Instant) {
+    if case.starts_with("parallel_") {
+        println!(
+            "E3_PROGRESS case={case} entry={entry} phase={phase} elapsed_us={}",
+            micros(started.elapsed())
+        );
+    }
+}
+
 impl Prepared {
     async fn fresh(
         id: usize,
@@ -181,18 +190,29 @@ impl Prepared {
             .defer_decryption_from_start(true)
             .build()
             .unwrap();
-        let (prover, verifier) = tokio::join!(prover.commit(config), async {
+        let proving = async {
+            preparation_progress(experiment_case, id, "prover_commit_started", started);
+            let result = prover.commit(config).await;
+            preparation_progress(experiment_case, id, "prover_commit_returned", started);
+            result
+        };
+        let verifying = async {
+            preparation_progress(experiment_case, id, "verifier_commit_started", started);
             let VerifierCommitStart::Mpc(verifier) = verifier.commit().await.unwrap() else {
                 panic!("expected MPC");
             };
+            preparation_progress(experiment_case, id, "verifier_commit_received", started);
             // Cancellation test pauses after the verifier receives the request,
             // while the prover awaits acceptance and live drivers are running.
             if let Some(gate) = gate {
                 gate.reached.send(()).unwrap();
                 gate.proceed.await.unwrap();
             }
-            verifier.accept().await
-        });
+            let result = verifier.accept().await;
+            preparation_progress(experiment_case, id, "verifier_accept_returned", started);
+            result
+        };
+        let (prover, verifier) = tokio::join!(proving, verifying);
         let setup_us = micros(started.elapsed());
         println!("E3_METRIC case={experiment_case} kind=prepared entry={id} setup_us={setup_us}");
         Self {
@@ -394,7 +414,7 @@ async fn sustained_pool_comparison(parallel_refill: bool) {
         // once; complete block clocks include every preparation and cleanup.
         for block in 0..2 {
             let started = Instant::now();
-            let (a, b, resources, entries) = tokio::time::timeout(Duration::from_secs(20), async {
+            let result = tokio::time::timeout(Duration::from_secs(20), async {
                 if (cycle + block) % 2 == 0 {
                     let cold = |job| {
                         let resources = cold_resources.clone();
@@ -444,8 +464,33 @@ async fn sustained_pool_comparison(parallel_refill: bool) {
                     (a, b, &prepared, &mut prepared_entries)
                 }
             })
-            .await
-            .expect("fixture preparation/burst exceeded its twenty-second liveness bound");
+            .await;
+            let (a, b, resources, entries) = match result {
+                Ok(completed) => completed,
+                Err(_) => {
+                    let prepared_slots = pool.slots.clone();
+                    pool.close().await;
+                    let idle = tokio::time::timeout(Duration::from_secs(2), async {
+                        while prepared.active_drivers.load(Ordering::SeqCst) != 0
+                            || cold_resources.active_drivers.load(Ordering::SeqCst) != 0
+                        {
+                            tokio::task::yield_now().await;
+                        }
+                    })
+                    .await
+                    .is_ok();
+                    println!(
+                        "E3_TIMEOUT parallel={} cycle={cycle} block={block} drivers_idle={idle} cold_permits={} prepared_permits={}",
+                        parallel_refill,
+                        cold_slots.available_permits(),
+                        prepared_slots.available_permits(),
+                    );
+                    assert!(idle);
+                    assert_eq!(cold_slots.available_permits(), 2);
+                    assert_eq!(prepared_slots.available_permits(), 2);
+                    panic!("fixture preparation/burst exceeded its twenty-second liveness bound");
+                }
+            };
             assert_eq!((a.job, b.job), (cycle * 2 + 1, cycle * 2 + 2));
             assert!(entries.insert(a.entry) && entries.insert(b.entry));
             assert_eq!(resources.active_drivers.load(Ordering::SeqCst), 0);
