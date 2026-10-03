@@ -128,7 +128,7 @@ The harness tests these behaviors with real cryptography:
   It records demand latency separately from full preparation and cleanup.
 
 ```sh
-CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=32 cargo +1.95.0 test --locked -p tlsn \
+CARGO_BUILD_JOBS=2 RAYON_NUM_THREADS=64 cargo +1.95.0 test --locked -p tlsn \
   --features experiment-telemetry --profile tests-integration \
   --test prepared_pool -- --ignored --nocapture --test-threads=1
 ```
@@ -198,11 +198,11 @@ quotas, network transport or receipt persistence. The p95 is nearest rank;
 repeated samples on one host are correlated.
 
 Preparation reduced latency after demand arrived in both repeats. This pool
-refills its two entries serially, while cold setup runs concurrently. Complete
+refilled its two entries serially, while cold setup ran concurrently. Complete
 prepared blocks also include the artificial hold. Its full block rate therefore
-does not show a throughput improvement. Parallel refill or preparation
-overlapping arrivals would require a separate comparison and the production
-admission/binding contract described above.
+does not show a throughput improvement. Parallel refill is measured below.
+Overlapping preparation with ongoing arrivals still needs a separate comparison
+and the production admission/binding contract described above.
 
 Earlier run 018 stopped responding during a cold block after forty-seven
 sustained and four basic proofs. The controller stopped that isolated fixture
@@ -212,3 +212,57 @@ latency claim. The current fixture supervises backend completion during response
 I/O, aborts an owned backend on exit, and bounds response/finalization waits to
 ten seconds and complete sustained blocks to twenty seconds. The two later
 repeats passed with those bounds. The original stall's cause remains unknown.
+
+## Parallel refill and thread budgets
+
+The fixture can prepare its two permit-owned entries concurrently. Both pending
+preparations count against capacity, so leased entries cannot be replaced early
+and cancellation closes their owned session drivers. Every entry still has new
+single-use material. The current five-case fixture bounds each preparation and
+proof wait to ten seconds, supervises session drivers during setup, aborts owned
+backend/server tasks on exit and retains fixed numeric progress events.
+
+The [parallel comparison report](prepared-pool-parallel-results.json) and
+[CSV](prepared-pool-parallel-results.csv) preserve every attempted run. At
+32 Rayon threads, run 022 timed out during parallel preparation after 26 proofs;
+its serial group completed 60. Run 023 completed 60 parallel proofs, then its
+serial cold block timed out after 23. That timeout returned both permits and
+left no session driver running. Run 028 stalled before its first preparation
+completed and was stopped after 2:13. Run 030 passed all five tests and 124
+proofs. Its repeat 031 timed out during a cold reference preparation after the
+verifier received the commitment request: the parallel group had 49 completed
+proofs, while the serial group completed 60. No session driver exit was observed
+for that failure. These failures are not confined to parallel refill.
+
+Two runs with the same current source and 64 Rayon threads passed all five
+tests, each with 120 sustained and four basic proofs. Every case has thirty
+samples in each complete comparison group:
+
+| Run | Refill | Cold / prepared median | Cold / prepared p95 | Cold / prepared full block rate |
+| --- | --- | --- | --- | --- |
+| 032, 64 threads | Serial | 390.505 / 121.543 ms | 421.580 / 129.072 ms | 5.034 / 3.075 jobs/s |
+| 032, 64 threads | Parallel | 394.047 / 124.101 ms | 427.584 / 144.549 ms | 4.992 / 4.366 jobs/s |
+| 033, 64 threads | Serial | 396.584 / 122.901 ms | 411.746 / 125.552 ms | 5.022 / 3.079 jobs/s |
+| 033, 64 threads | Parallel | 390.299 / 122.316 ms | 410.641 / 128.369 ms | 5.080 / 4.398 jobs/s |
+
+Parallel refill improved the complete prepared block rate over serial refill in
+both runs. It still fell below cold execution when the 50 ms hold was included.
+Increasing threads also changed performance: the complete 32-thread comparison
+030 had cold full block rates around 5.6 jobs/s, versus around 5.0 in the two
+64-thread runs. The complete groups inside failed suites remain marked
+separately from the whole-suite outcomes. Partial groups have no complete
+latency or throughput estimate.
+
+Run 033 measured 159.152 user CPU seconds, 86.093 system CPU seconds and
+886.358 MB peak RSS for the entire Cargo/test child tree. That includes the
+warm build check, all five cases and unused/recovery preparations. It cannot
+establish CPU or memory per successful proof. Other runs lack this measurement.
+
+The pool command above uses 64 threads. Use 32 to reproduce the smaller
+thread-budget comparison. The
+thread-count change tests a starvation hypothesis; the two later passes do not
+prove the earlier cause or eliminate intermittent failure. Library version,
+transport and instrumentation also differ from Scarlett's live node. These
+fixture results do not establish a live-provider reliability or throughput
+gain. Authenticated preparation admission and future funded-job binding remain
+required before production can use this pool.
